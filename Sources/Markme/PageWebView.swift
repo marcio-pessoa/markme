@@ -5,6 +5,7 @@ import MarkmeCore
 struct PageWebView: NSViewRepresentable {
     let html: String
     let articleHTML: String
+    let needsDiagrams: Bool
     let baseURL: URL?
     let findQuery: String
     let scrollToLine: Int?
@@ -63,12 +64,14 @@ struct PageWebView: NSViewRepresentable {
                 && !context.coordinator.awaitingLoad
                 && !presenting
                 && !articleHTML.isEmpty
+                && (!needsDiagrams || context.coordinator.loadedDiagrams)
             context.coordinator.lastHTML = html
             context.coordinator.lastBase = baseURL
             if canReplace {
                 context.coordinator.replaceArticle(articleHTML, in: view)
             } else {
                 context.coordinator.awaitingLoad = true
+                context.coordinator.loadedDiagrams = needsDiagrams
                 view.loadHTMLString(html, baseURL: baseURL)
             }
         } else if !context.coordinator.awaitingLoad,
@@ -121,6 +124,7 @@ struct PageWebView: NSViewRepresentable {
         var pendingChangeCursor: Int?
         var pendingChangeToken = 0
         var awaitingLoad = false
+        var loadedDiagrams = false
 
         func applyPresentation(in webView: WKWebView) {
             let flag = presenting ? "true" : "false"

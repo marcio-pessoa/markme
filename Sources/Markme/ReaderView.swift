@@ -7,6 +7,7 @@ struct ReaderView: View {
     @State private var model: ReaderModel
     @State private var pageHTML = ""
     @State private var pageBody = ""
+    @State private var pageNeedsDiagrams = false
     @State private var split = SplitFraction()
     @State private var dragOrigin: CGFloat = 0.5
     @State private var findQuery = ""
@@ -203,6 +204,7 @@ struct ReaderView: View {
         PageWebView(
             html: pageHTML,
             articleHTML: pageBody,
+            needsDiagrams: pageNeedsDiagrams,
             baseURL: fileURL?.deletingLastPathComponent(),
             findQuery: findPresented ? findQuery : "",
             scrollToLine: pageScrollLine,
@@ -538,6 +540,7 @@ struct ReaderView: View {
             changeScrollToken = 0
         }
         pageBody = rendered.body
+        pageNeedsDiagrams = needsDiagram
         pageHTML = rendered.html
     }
 
